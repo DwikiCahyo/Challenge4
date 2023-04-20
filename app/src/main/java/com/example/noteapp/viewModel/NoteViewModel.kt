@@ -59,5 +59,12 @@ class NoteViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
+    fun insertNote(title:String, content:String){
+        viewModelScope.launch(Dispatchers.IO){
+            val userDao = NoteDatabase.getInstance(getApplication())!!.noteDao()
+            userDao.insertNoteData(NoteData(0,title,content))
+        }
+    }
+
 
 }

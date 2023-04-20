@@ -46,12 +46,9 @@ class AddFragment : Fragment() {
     }
 
     fun addNote(){
-        GlobalScope.async {
-            val title = binding.edtTitle.text.toString()
-            val content = binding.intEditText.text.toString()
-
-            dbNote!!.noteDao().insertNoteData(NoteData(0,title,content))
-        }
+        val title = binding.edtTitle.text.toString()
+        val content = binding.intEditText.text.toString()
+        viewModel.insertNote(title,content)
         Toast.makeText(requireContext(),"Berhasil menambahkan catatan",Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.action_addFragment_to_mainFragment)
     }
