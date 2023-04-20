@@ -1,6 +1,7 @@
 package com.example.noteapp.di.module
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
@@ -31,5 +32,13 @@ class ApplicationModule {
     fun providePrefManager(dataStore: DataStore<Preferences>): PreferenceManager {
         return PreferenceManager(dataStore)
     }
+
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+    }
+    
 
 }

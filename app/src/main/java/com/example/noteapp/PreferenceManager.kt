@@ -11,33 +11,6 @@ import kotlinx.coroutines.flow.map
 
 class PreferenceManager @Inject constructor(private val dataStore:DataStore<Preferences>) {
 
-    //save username
-  suspend fun saveUsername(username:String){
-      dataStore.edit{
-          it[USERNAME] = username
-      }
-  }
-
-    //get username
-    fun getUsername(): Flow<String> {
-        return dataStore.data.map {
-            it[USERNAME] ?: ""
-        }
-    }
-
-    //save password
-    suspend fun savePassword(password:String){
-        dataStore.edit{
-            it[USERNAME] = password
-        }
-    }
-
-    //get password
-    fun getPassword(): Flow<String> {
-        return dataStore.data.map {
-            it[PASSWORD] ?: ""
-        }
-    }
 
     //get login state
     fun getLoginState():Flow<Boolean>{
