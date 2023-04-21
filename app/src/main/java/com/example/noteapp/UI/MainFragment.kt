@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.noteapp.R
@@ -26,7 +28,7 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private val viewModel:LoginViewModel by viewModels()
+    private val loginViewModel:LoginViewModel by viewModels()
     private val stateViewModel:StateViewModel by viewModels()
     private val noteViewModel:NoteViewModel by viewModels()
     private lateinit var adapter:NoteAdapter
@@ -43,33 +45,27 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val name = viewModel.getUsernamePreferences("key_username").toString()
+        val name = loginViewModel.getUsernamePreferences("key_username").toString()
         binding.tvWelcome.text = getString(R.string.welcome,name)
+
+        activity?.window!!.statusBarColor = ContextCompat.getColor(requireContext(),R.color.white)
 
         adapter = NoteAdapter(ArrayList())
 
-        //default list
-        noteViewModel.getListNoteObserver().observe(viewLifecycleOwner){
-            adapter.setData(it as ArrayList<NoteData>)
-            setupRecyclerView()
+        //check sort state
+        stateViewModel.getSortState().observe(viewLifecycleOwner){ state  ->
+            Log.d(TAG,"Sort state $state")
+            if (state) descendingList() else defaultList()
         }
 
-        //filter descending list
-        binding.btnDesc.setOnClickListener {
-            noteViewModel.getListNoteDesc()
-            noteViewModel.getListNoteDescObserver().observe(viewLifecycleOwner){
-                adapter.setData(it as ArrayList<NoteData>)
-                setupRecyclerView()
-            }
-        }
-
-        //filter ascending list
         binding.btnAsc.setOnClickListener {
-            noteViewModel.getListNote()
-            noteViewModel.getListNoteObserver().observe(viewLifecycleOwner){
-                adapter.setData(it as ArrayList<NoteData>)
-                setupRecyclerView()
-            }
+            stateViewModel.saveSortState(false)
+            defaultList()
+        }
+
+        binding.btnDesc.setOnClickListener {
+            stateViewModel.saveSortState(true)
+            descendingList()
         }
 
         //logout
@@ -86,14 +82,30 @@ class MainFragment : Fragment() {
 
     }
 
+    private fun descendingList() {
+        noteViewModel.getListNoteDesc()
+        noteViewModel.getListNoteDescObserver().observe(viewLifecycleOwner) {
+            adapter.setData(it as ArrayList<NoteData>)
+            setupRecyclerView()
+        }
+    }
+
+    private fun defaultList() {
+        noteViewModel.getListNote()
+        noteViewModel.getListNoteObserver().observe(viewLifecycleOwner) {
+            adapter.setData(it as ArrayList<NoteData>)
+            setupRecyclerView()
+        }
+    }
+
     private fun setupRecyclerView() {
         binding.rvNote.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
         binding.rvNote.adapter = adapter
-        Log.d("Main Setup rv","Setup rv")
+        Log.d(TAG,"Setup rv")
     }
 
     fun getAllNote(){
-        GlobalScope.launch {
+        lifecycleScope.launch {
             var data = NoteDB?.noteDao()?.getNoteData()
             activity?.runOnUiThread{
                 binding.rvNote.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -108,5 +120,10 @@ class MainFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    companion object{
+        const val TAG  = "MainFragment"
+    }
+
 
 }

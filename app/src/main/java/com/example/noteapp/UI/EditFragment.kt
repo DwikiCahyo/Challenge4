@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.noteapp.R
@@ -39,6 +40,7 @@ class EditFragment : Fragment() {
             arguments?.getParcelable("data")
         }
 
+        activity?.window!!.statusBarColor = ContextCompat.getColor(requireContext(),R.color.white)
        binding.edtTitle.setText(dataNote?.titleNote ?: "Kosong")
        binding.intEditText.setText(dataNote?.contentNote ?: "Tidak ada isi")
        binding.tvId.text = dataNote?.id.toString()

@@ -20,10 +20,6 @@ class NoteViewModel(application: Application):AndroidViewModel(application) {
 
     var listNote:MutableLiveData<List<NoteData>> = MutableLiveData()
 
-    init {
-        getListNote()
-    }
-
     fun getListNoteObserver():MutableLiveData<List<NoteData>>{
         return listNote
     }

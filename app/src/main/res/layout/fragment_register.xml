@@ -69,6 +69,7 @@
             android:hint="password"
             android:fontFamily="@font/poppins_regular"
             android:maxLength="13"
+            android:inputType="textPassword"
             android:textColorHint="#80D5D5D5"
             android:textSize="18sp"
             android:padding="5dp"/>

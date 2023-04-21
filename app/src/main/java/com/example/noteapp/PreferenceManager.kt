@@ -1,6 +1,7 @@
 package com.example.noteapp
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import javax.inject.Inject
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -27,6 +28,21 @@ class PreferenceManager @Inject constructor(private val dataStore:DataStore<Pref
         }
     }
 
+    //get sort state
+    fun getSortState():Flow<Boolean>{
+        return dataStore.data.map {
+            it[SORT_STATE] ?: false
+        }
+    }
+
+    //save sort state
+   suspend fun saveSortState(state:Boolean){
+       dataStore.edit{
+           it[SORT_STATE] = state
+       }
+   }
+
+
     //logout
     suspend fun logout(){
         dataStore.edit {
@@ -39,6 +55,7 @@ class PreferenceManager @Inject constructor(private val dataStore:DataStore<Pref
         private val USERNAME = stringPreferencesKey("username")
         private val PASSWORD = stringPreferencesKey("password")
         private val LOGIN_STATE = booleanPreferencesKey("login_state")
+        private val SORT_STATE = booleanPreferencesKey("sort_state")
     }
 
 }

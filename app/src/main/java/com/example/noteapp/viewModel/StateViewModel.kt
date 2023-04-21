@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.noteapp.PreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +22,17 @@ class StateViewModel  @Inject constructor(private val prefManager:PreferenceMana
     fun saveLoginState(state:Boolean){
         viewModelScope.launch {
             prefManager.saveLoginState(state)
+        }
+    }
+
+    fun getSortState():LiveData<Boolean>{
+        return prefManager.getSortState().asLiveData()
+    }
+
+    //save sort state
+    fun saveSortState(state: Boolean){
+        viewModelScope.launch(Dispatchers.IO){
+             prefManager.saveSortState(state)
         }
     }
 
